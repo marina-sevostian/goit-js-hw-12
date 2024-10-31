@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import { fetchImages } from './js/pixabay-api';
 import { renderImages } from './js/render-functions';
 
@@ -16,13 +18,13 @@ let loader = document.querySelector('.loader');
 
 loader.classList.replace('loader', 'hide');
 
-searchFormEl.addEventListener('submit', e => {
+searchFormEl.addEventListener('submit', async e => {
   e.preventDefault();
   const inputValue = inputForm.value.trim();
   cleanHtml();
   loader.classList.replace('hide', 'loader');
   if (inputValue !== '') {
-    fetchImages(inputValue)
+    await fetchImages(inputValue)
       .then(images => {
         if (images.hits.length === 0) {
           iziToast.error({
