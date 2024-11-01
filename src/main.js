@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { NewApiService } from './js/pixabay-api';
+import NewApiService from './js/pixabay-api';
 import { renderImages } from './js/render-functions';
 
 import SimpleLightbox from 'simplelightbox';
@@ -23,28 +23,22 @@ loadMoreBtn.classList.replace('load-more', 'hide');
 let isShown = 0;
 const newsApiService = new NewApiService();
 
-searchFormEl.addEventListener('submit', async e => {
-  e.preventDefault();
+searchFormEl.addEventListener('submit', onSearch);
+
+function onSearch(element) {
+  element.preventDefault();
   cleanHtml();
-  newsApiService.query = inputForm.value.trim();
+  newsApiService.query =
+    element.currentTarget.elements.searchQuery.value.trim();
   loader.classList.replace('hide', 'loader');
   loadMoreBtn.classList.replace('load-more', 'hide');
   newsApiService.resetPage();
   if (newsApiService.query !== '') {
     isShown = 0;
     fetchImages();
-    renderImages(hits);
-    // catch (error) {
-    //   loader.classList.replace('loader', 'hide');
-    //   loadMoreBtn.classList.replace('load-more', 'hide');
-    //   iziToast.error({
-    //     title: 'Error',
-    //     message: `Error! Sorry, something went wrong. This is an error!`,
-    //     color: '#ef4040',
-    //     close: false,
-    //   });
-    // }
+    // renderImages(hits);
     searchFormEl.reset();
+    return;
   } else {
     loader.classList.replace('loader', 'hide');
     iziToast.warning({
@@ -55,22 +49,14 @@ searchFormEl.addEventListener('submit', async e => {
     });
     return;
   }
-});
-
-new SimpleLightbox('.gallery a', {
-  captions: true,
-  captionsData: 'alt',
-  captionDelay: 250,
-});
-function cleanHtml() {
-  gallery.innerHTML = '';
 }
 
 async function fetchImages() {
   loadMoreBtn.classList.replace('load-more', 'hide');
 
   const result = await newsApiService.fetchImages();
-  const { hits, total } = result;
+  console.log(result);
+  const { hits, totalHits } = result;
   isShown += hits.length;
 
   if (!hits.length) {
@@ -80,6 +66,7 @@ async function fetchImages() {
       color: '#ef4040',
       close: false,
     });
+    loader.classList.replace('loader', 'hide');
     loadMoreBtn.classList.replace('load-more', 'hide');
     return;
   }
@@ -87,10 +74,10 @@ async function fetchImages() {
   isShown += hits.length;
   gallerySimpleLightbox.refresh();
   loader.classList.replace('loader', 'hide');
-  if (isShown < total) {
+  if (isShown < totalHits) {
     loadMoreBtn.classList.replace('hide', 'load-more');
   }
-  if (isShown >= total) {
+  if (isShown >= totalHits) {
     loadMoreBtn.classList.replace('load-more', 'hide');
     iziToast.error({
       title: 'Error',
@@ -99,4 +86,13 @@ async function fetchImages() {
       close: false,
     });
   }
+}
+
+new SimpleLightbox('.gallery a', {
+  captions: true,
+  captionsData: 'alt',
+  captionDelay: 250,
+});
+function cleanHtml() {
+  gallery.innerHTML = '';
 }
