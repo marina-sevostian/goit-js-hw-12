@@ -71,6 +71,13 @@ async function fetchImages() {
     return;
   }
   renderImages(hits);
+  let oneImage = document.querySelector('.gallery-image');
+  let rect = oneImage.getBoundingClientRect();
+  window.scrollBy(0, -window.innerHeight);
+  window.scrollBy({
+    top: rect.height * 2,
+    behavior: 'smooth',
+  });
   isShown += hits.length;
   gallerySimpleLightbox.refresh();
   loader.classList.replace('loader', 'hide');
