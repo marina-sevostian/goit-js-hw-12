@@ -55,7 +55,6 @@ async function fetchImages() {
   loadMoreBtn.classList.replace('load-more', 'hide');
 
   const result = await newsApiService.fetchImages();
-  console.log(result);
   const { hits, totalHits } = result;
   isShown += hits.length;
 
