@@ -24,6 +24,7 @@ let isShown = 0;
 const newsApiService = new NewApiService();
 
 searchFormEl.addEventListener('submit', onSearch);
+loadMoreBtn.addEventListener('click', onLoadMore);
 
 function onSearch(element) {
   element.preventDefault();
@@ -94,4 +95,11 @@ new SimpleLightbox('.gallery a', {
 });
 function cleanHtml() {
   gallery.innerHTML = '';
+}
+
+function onLoadMore() {
+  newsApiService.incrementPage();
+  loader.classList.replace('hide', 'loader');
+  loadMoreBtn.classList.replace('load-more', 'hide');
+  fetchImages();
 }
