@@ -71,7 +71,9 @@ main:has(.back-link) {
 .hide {
   display: none;
 }
-
+.loader-under-btn {
+  margin-top: auto;
+}
 .visually-hidden {
   position: absolute;
   width: 1px;

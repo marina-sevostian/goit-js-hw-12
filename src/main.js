@@ -107,6 +107,15 @@ function cleanHtml() {
 function onLoadMore() {
   newsApiService.incrementPage();
   loader.classList.replace('hide', 'loader');
+  loader.classList.add('loader-under-btn');
   loadMoreBtn.classList.replace('load-more', 'hide');
   fetchImages();
+  loader.classList.remove('loader-under-btn');
 }
+
+// let loaderUnderBtn = loader.getBoundingClientRect();
+// loader.scroll(0, -window.innerHeight);
+// loader.scroll({
+//   top: window.innerHeight - loaderUnderBtn.bottom,
+//   behavior: 'instant',
+// });
