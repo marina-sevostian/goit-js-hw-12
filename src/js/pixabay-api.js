@@ -27,6 +27,8 @@ export default class NewApiService {
       const response = await axios(axiosOptions);
       const data = response.data;
       this.incrementPage();
+      console.log(data);
+
       return data;
     } catch (error) {
       loader.classList.replace('loader', 'hide');

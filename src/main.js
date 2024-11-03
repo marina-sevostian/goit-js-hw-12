@@ -55,44 +55,59 @@ function onSearch(element) {
 async function fetchImages() {
   loadMoreBtn.classList.replace('load-more', 'hide');
 
-  const result = await newsApiService.fetchImages();
-  const { hits, totalHits } = result;
-  isShown += hits.length;
-
-  if (!hits.length) {
-    iziToast.error({
-      title: 'Error',
-      message: `Sorry, there are no images matching your search query. Please try again!`,
-      color: '#ef4040',
-      close: false,
+  // const result = await newsApiService.fetchImages();
+  // const { hits, totalHits } = result;
+  // isShown += hits.length;
+  // await newsApiService.fetchImages().then(({ data }) => {
+  await newsApiService
+    .fetchImages()
+    .then(({ hits, totalHits }) => {
+      if (!hits.length) {
+        iziToast.error({
+          title: 'Error',
+          message: `Sorry, there are no images matching your search query. Please try again!`,
+          color: '#ef4040',
+          close: false,
+        });
+        loader.classList.replace('loader', 'hide');
+        loadMoreBtn.classList.replace('load-more', 'hide');
+        return;
+      }
+      newsApiService.totalPage = Math.ceil(totalHits / newsApiService.per_page);
+      renderImages(hits);
+      let oneImage = document.querySelector('.gallery-image');
+      let rect = oneImage.getBoundingClientRect();
+      window.scrollBy(0, -window.innerHeight);
+      window.scrollBy({
+        top: rect.height * 2,
+        behavior: 'smooth',
+      });
+      isShown += 1;
+      gallerySimpleLightbox.refresh();
+      loader.classList.replace('loader', 'hide');
+      if (isShown < newsApiService.totalPage) {
+        loadMoreBtn.classList.replace('hide', 'load-more');
+      }
+      if (isShown >= newsApiService.totalPage) {
+        loadMoreBtn.classList.replace('load-more', 'hide');
+        iziToast.error({
+          title: 'Error',
+          message: `We're sorry, but you've reached the end of search results.`,
+          color: '#ef4040',
+          close: false,
+        });
+      }
+    })
+    .catch(error => {
+      loader.classList.replace('loader', 'hide');
+      loadMoreBtn.classList.replace('load-more', 'hide');
+      iziToast.error({
+        title: 'Error',
+        message: `Error! Sorry, something went wrong. This is an error!`,
+        color: '#ef4040',
+        close: false,
+      });
     });
-    loader.classList.replace('loader', 'hide');
-    loadMoreBtn.classList.replace('load-more', 'hide');
-    return;
-  }
-  renderImages(hits);
-  let oneImage = document.querySelector('.gallery-image');
-  let rect = oneImage.getBoundingClientRect();
-  window.scrollBy(0, -window.innerHeight);
-  window.scrollBy({
-    top: rect.height * 2,
-    behavior: 'smooth',
-  });
-  isShown += hits.length;
-  gallerySimpleLightbox.refresh();
-  loader.classList.replace('loader', 'hide');
-  if (isShown < totalHits) {
-    loadMoreBtn.classList.replace('hide', 'load-more');
-  }
-  if (isShown >= totalHits) {
-    loadMoreBtn.classList.replace('load-more', 'hide');
-    iziToast.error({
-      title: 'Error',
-      message: `We're sorry, but you've reached the end of search results.`,
-      color: '#ef4040',
-      close: false,
-    });
-  }
 }
 
 new SimpleLightbox('.gallery a', {
