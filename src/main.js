@@ -105,7 +105,7 @@ function cleanHtml() {
 }
 
 function onLoadMore() {
-  newsApiService.incrementPage();
+  // newsApiService.incrementPage();
   loader.classList.replace('hide', 'loader');
   loader.classList.add('loader-under-btn');
   loadMoreBtn.classList.replace('load-more', 'hide');
